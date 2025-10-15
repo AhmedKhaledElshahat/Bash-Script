@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#path of the directory where this script and modules  is located
+
+script_dir="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+modules_dir="$script_dir/modules"
+
+#---------------------------------------------------
+
+#Loop all .sh in modules directory
+
+for module_file in "$modules_dir"/*.sh
+do
+    [ -f "$module_file" ] && source "$module_file"
+done
+
+#---------------------------------------------------
+
+
+# Check if the script is run as root
+
+if [ "$EUID" -ne 0 ]; then
+    echo " You must run this script as root."
+    exit 1
+fi
+#---------------------------------------------------
+
+# Main menu using select
+
+PS3="Choose an option from the menu: "
+
+
+
+options=(
+    "Add User"
+    "Modify User"
+    "Delete User"
+    "List Users"
+    "Disable User"
+    "Enable User"
+    "Change Password"
+    "Add Group"
+    "Modify Group"
+    "Delete Group"
+    "List Groups"
+    "About"
+    "Exit"
+)
+
+select opt in "${options[@]}"; do
+    case $REPLY in
+        1) create_new_user ;;
+        2) modify_user ;;
+        3) delete_user ;;
+        4) display_users ;;
+        5) disable_user ;;
+        6) enable_user ;;
+        7) change_password ;;
+        8) create_group ;;
+        9) modify_group ;;
+        10) delete_group ;;
+        11) list_groups ;;
+        12) about ;;
+        13) echo " Exiting... Goodbye" break;;
+        *)echo " Invalid choice, please try again.";;
+    esac
+done
